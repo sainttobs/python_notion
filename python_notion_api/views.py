@@ -22,7 +22,8 @@ def index(request):
         # githubIssues = {}
         # for data in github_data:
         #     githubIssues['url'] = github_data[data]
-        return HttpResponse(githubIssuesurl)
+        githubIssues = github_data.json()[0]['state']
+        return HttpResponse(githubIssues)
 
 
 # Create your views here.

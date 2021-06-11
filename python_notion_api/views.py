@@ -19,10 +19,18 @@ def index(request):
     if github_data.status_code != 200:
         raise ApiError('Response Status: {response.status_code}')
     else:
-        # githubIssues = {}
         # for data in github_data:
         #     githubIssues['url'] = github_data[data]
-        githubIssues = github_data.json()[0]['state']
+        github_data = github_data.json()
+        # getting length of list
+        length = len(github_data)
+        githubIssues = dict()
+        for i in range(length):
+            # githubIssues.append(github_data[i]['title'])
+            githubIssues['title'] = github_data[i]['title']
+            print(githubIssues)
+    
+        # id, title, state, body
         return HttpResponse(githubIssues)
 
 

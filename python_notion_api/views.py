@@ -30,14 +30,14 @@ def index(request):
             githubIssues['state'] = github_data[i]['state']
             githubIssues['body'] = github_data[i]['body']
             # gitIssues.append(githubIssues)
-            database_id = env(NOTION_DATABASE_ID)
-            notion_post = request.post('https://api.notion.com/v1/pages')
-            notion_post.headers={"Authorization": "token" + env('NOTION_KEY'), "Content-Type": "application/json"}
+            database_id = env('NOTION_DATABASE_ID')
+            notion_post = requests.post('https://api.notion.com/v1/pages')
+            notion_post.headers={"Authorization": "Bearer" + env('NOTION_KEY'), "Content-Type": "application/json", "Notion-Version": "2021-05-13"}
             notion_post.data = {"parent":{"database_id": database_id}, "properties" : githubIssues}
-            print(githubIssues)
+            # print(githubIssues)
 
             if notion_post.status_code != 200:
-                return HttpResponse("An error Occured")
+                return HttpResponse(notion_post.text)
             else:
                 return HttpResponse(notion_post.text)
     

@@ -19,19 +19,30 @@ def index(request):
     if github_data.status_code != 200:
         raise ApiError('Response Status: {response.status_code}')
     else:
-        # for data in github_data:
-        #     githubIssues['url'] = github_data[data]
         github_data = github_data.json()
         # getting length of list
         length = len(github_data)
         githubIssues = dict()
+        # gitIssues = []
         for i in range(length):
-            # githubIssues.append(github_data[i]['title'])
+            githubIssues['id'] = github_data[i]['id']
             githubIssues['title'] = github_data[i]['title']
+            githubIssues['state'] = github_data[i]['state']
+            githubIssues['body'] = github_data[i]['body']
+            # gitIssues.append(githubIssues)
+            database_id = env(NOTION_DATABASE_ID)
+            notion_post = request.post('https://api.notion.com/v1/pages')
+            notion_post.headers={"Authorization": "token" + env('NOTION_KEY'), "Content-Type": "application/json"}
+            notion_post.data = {"parent":{"database_id": database_id}, "properties" : githubIssues}
             print(githubIssues)
+
+            if notion_post.status_code != 200:
+                return HttpResponse("An error Occured")
+            else:
+                return HttpResponse(notion_post.text)
     
         # id, title, state, body
-        return HttpResponse(githubIssues)
+        # return HttpResponse(githubIssues)
 
 
 # Create your views here.

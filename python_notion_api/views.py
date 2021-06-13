@@ -29,17 +29,18 @@ def index(request):
             githubIssues['title'] = github_data[i]['title']
             githubIssues['state'] = github_data[i]['state']
             githubIssues['body'] = github_data[i]['body']
-            # gitIssues.append(githubIssues)
+            
             database_id = env('NOTION_DATABASE_ID')
-            notion_post = requests.post('https://api.notion.com/v1/pages')
-            notion_post.headers={"Authorization": "Bearer" + env('NOTION_KEY'), "Content-Type": "application/json", "Notion-Version": "2021-05-13"}
-            notion_post.data = {"parent":{"database_id": database_id}, "properties" : githubIssues}
-            # print(githubIssues)
+            notion = requests.get('https://api.notion.com/v1/pages', headers = {"Authorization": "Bearer" + env('NOTION_KEY'), "Content-Type": "application/json", "Notion-Version": "2021-05-13"},data = {"parent":{"database_id": database_id}, "properties" : {"id": github_data[i]['id']}})
+            # notion = requests.post('https://api.notion.com/v1/pages')
+            # notion.headers={"Authorization": "Bearer" + env('NOTION_KEY'), "Content-Type": "application/json", "Notion-Version": "2021-05-13"}
+            # notion.data = {"parent":{"database_id": database_id}, "properties" : githubIssues}
+            print(github_data[i]['state'])
 
-            if notion_post.status_code != 200:
-                return HttpResponse(notion_post.text)
+            if notion.status_code != 200:
+                return HttpResponse(notion.text)
             else:
-                return HttpResponse(notion_post.text)
+                return HttpResponse(notion.text)
     
         # id, title, state, body
         # return HttpResponse(githubIssues)
